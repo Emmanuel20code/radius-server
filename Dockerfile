@@ -20,3 +20,18 @@ RUN chmod +x /entrypoint.sh
 EXPOSE 1812/udp 1813/udp
 
 ENTRYPOINT ["/entrypoint.sh"]
+# ... (Keep existing FROM and apt-get update)
+RUN apt-get update && apt-get install -y \
+    freeradius \
+    freeradius-postgresql \
+    freeradius-utils \
+    curl \
+    ca-certificates \
+    && curl -fsSL https://tailscale.com/install.sh | sh \
+    && rm -rf /var/lib/apt/lists/*
+
+# ... (Keep existing COPY lines)
+COPY radiusd.conf /etc/freeradius/3.0/radiusd.conf
+COPY sql.conf /etc/freeradius/3.0/mods-enabled/sql
+# ...
+
