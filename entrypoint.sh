@@ -1,13 +1,19 @@
 #!/bin/bash
 
-# Ensure required environment variables are set
+# Ensure required environment variable is set
 if [ -z "$TAILSCALE_AUTH_KEY" ]; then
     echo "ERROR: TAILSCALE_AUTH_KEY must be set."
     exit 1
 fi
 
 echo "Starting Tailscale..."
+# --tun=userspace-networking is required for Railway containers
 tailscaled --tun=userspace-networking &
+
+echo "Waiting for tailscaled to start..."
+sleep 5
+
+echo "Authenticating Tailscale..."
 tailscale up --authkey="$TAILSCALE_AUTH_KEY"
 
 echo "Tailscale connected. Starting FreeRADIUS..."
