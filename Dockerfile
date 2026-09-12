@@ -1,10 +1,15 @@
-# /radius-server/Dockerfile
-FROM freeradius/freeradius:latest
+# Use a reliable base image
+FROM debian:bookworm-slim
 
-# Install Certbot
-RUN apt-get update && apt-get install -y certbot
+# Install FreeRADIUS and Certbot
+RUN apt-get update && apt-get install -y \
+    freeradius \
+    freeradius-utils \
+    certbot \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy entrypoint script
+# Copy configuration and entrypoint
+COPY radiusd.conf /etc/freeradius/3.0/radiusd.conf
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
