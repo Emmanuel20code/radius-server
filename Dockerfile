@@ -14,7 +14,10 @@ COPY radiusd.conf /etc/freeradius/3.0/radiusd.conf
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Expose RadSec port (for reference)
-EXPOSE 2083
+# Expose standard RADIUS ports (UDP)
+EXPOSE 1812/udp 1813/udp
+
+# Optional: Expose TCP ports for RadSec if using TLS
+# EXPOSE 2083/tcp 2084/tcp
 
 ENTRYPOINT ["/entrypoint.sh"]
