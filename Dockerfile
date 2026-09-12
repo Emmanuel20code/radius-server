@@ -1,4 +1,4 @@
-FROM ghcr.io/library/alpine:latest
+FROM alpine:3.18
 
 # Install dependencies, FreeRADIUS, and Tailscale
 RUN apk add --no-cache \
