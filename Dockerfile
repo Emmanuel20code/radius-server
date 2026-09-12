@@ -1,13 +1,15 @@
-FROM ubuntu:24.04
+FROM alpine:latest
 
 # Install dependencies, FreeRADIUS, and Tailscale
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     freeradius \
     freeradius-utils \
     curl \
     ca-certificates \
+    bash \
     && curl -fsSL https://tailscale.com/install.sh | sh \
-    && rm -rf /var/lib/apt/lists/*
+    || (echo "Note: Tailscale install.sh may not work on Alpine, installing from apk..." \
+        && apk add --no-cache tailscale)
 
 # Copy configuration and entrypoint
 COPY radiusd.conf /etc/freeradius/3.0/radiusd.conf
