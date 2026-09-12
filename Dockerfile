@@ -1,4 +1,3 @@
-# Use a reliable base image
 FROM debian:bookworm-slim
 
 # Install FreeRADIUS and Certbot
@@ -13,8 +12,9 @@ COPY radiusd.conf /etc/freeradius/3.0/radiusd.conf
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Create directory for Let's Encrypt
-RUN mkdir -p /etc/letsencrypt
+# Create directory for Let's Encrypt and ensure correct ownership
+RUN mkdir -p /etc/letsencrypt /var/log/freeradius && \
+    chown -R freerad:freerad /etc/letsencrypt /var/log/freeradius
 
 # Expose RadSec port
 EXPOSE 2083
