@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Debug: Print all environment variables
-echo "DEBUG: Environment variables:"
-env
-
 # Ensure required environment variable is set
 if [ -z "tskey-auth-kn387nZ38911CNTRL-wqa8JBCPX57oThAJaaT157XqLZatuYDDa" ]; then
     echo "ERROR: TAILSCALE_AUTH_KEY must be set."
@@ -11,7 +7,6 @@ if [ -z "tskey-auth-kn387nZ38911CNTRL-wqa8JBCPX57oThAJaaT157XqLZatuYDDa" ]; then
 fi
 
 echo "Starting Tailscale..."
-# --tun=userspace-networking is required for Railway containers
 tailscaled --tun=userspace-networking &
 
 echo "Waiting for tailscaled to start..."
@@ -21,11 +16,16 @@ echo "Authenticating Tailscale..."
 tailscale up --authkey="tskey-auth-kn387nZ38911CNTRL-wqa8JBCPX57oThAJaaT157XqLZatuYDDa"
 
 echo "Tailscale connected. Starting FreeRADIUS..."
-# Check for FreeRADIUS in the correct location dynamically
-RADIUS_PATH=$(which radiusd)
-if [ -z "$RADIUS_PATH" ]; then
-    echo "ERROR: radiusd executable not found."
+
+# Try to find the executable
+RADIUS_PATH=$(which radiusd || which freeradius || echo "/usr/sbin/radiusd")
+
+echo "Attempting to start FreeRADIUS at: $RADIUS_PATH"
+
+if [ -f "$RADIUS_PATH" ]; then
+    $RADIUS_PATH -f -X
+else
+    echo "ERROR: radius executable not found at $RADIUS_PATH. Listing contents of /usr/sbin/:"
+    ls -l /usr/sbin/
     exit 1
 fi
-
-$RADIUS_PATH -f -X
