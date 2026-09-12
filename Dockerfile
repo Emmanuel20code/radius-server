@@ -14,7 +14,7 @@ COPY radiusd.conf /etc/freeradius/3.0/radiusd.conf
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Expose RadSec port (for reference, though Tailscale will handle the traffic)
+# Expose RadSec port (for reference)
 EXPOSE 2083
 
 ENTRYPOINT ["/entrypoint.sh"]
