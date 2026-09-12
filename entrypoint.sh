@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ensure required environment variable is set
-if [ -z "tskey-auth-kn387nZ38911CNTRL-wqa8JBCPX57oThAJaaT157XqLZatuYDDa" ]; then
+if [ -z "$TAILSCALE_AUTH_KEY" ]; then
     echo "ERROR: TAILSCALE_AUTH_KEY must be set."
     exit 1
 fi
@@ -14,7 +14,7 @@ echo "Waiting for tailscaled to start..."
 sleep 5
 
 echo "Authenticating Tailscale..."
-tailscale up --authkey="tskey-auth-kn387nZ38911CNTRL-wqa8JBCPX57oThAJaaT157XqLZatuYDDa"
+tailscale up --authkey="$TAILSCALE_AUTH_KEY"
 
 if [ $? -ne 0 ]; then
     echo "ERROR: Failed to authenticate Tailscale"
