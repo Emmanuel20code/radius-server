@@ -1,7 +1,11 @@
 #!/bin/bash
 
+# Debug: Print all environment variables
+echo "DEBUG: Environment variables:"
+env
+
 # Ensure required environment variable is set
-if [ -z "tskey-auth-kn387nZ38911CNTRL-wqa8JBCPX57oThAJaaT157XqLZatuYDDa" ]; then
+if [ -z "$TAILSCALE_AUTH_KEY" ]; then
     echo "ERROR: TAILSCALE_AUTH_KEY must be set."
     exit 1
 fi
@@ -14,7 +18,14 @@ echo "Waiting for tailscaled to start..."
 sleep 5
 
 echo "Authenticating Tailscale..."
-tailscale up --authkey="tskey-auth-kn387nZ38911CNTRL-wqa8JBCPX57oThAJaaT157XqLZatuYDDa"
+tailscale up --authkey="$TAILSCALE_AUTH_KEY"
 
 echo "Tailscale connected. Starting FreeRADIUS..."
-/usr/sbin/radiusd -f -X
+# Check for FreeRADIUS in the correct location dynamically
+RADIUS_PATH=$(which radiusd)
+if [ -z "$RADIUS_PATH" ]; then
+    echo "ERROR: radiusd executable not found."
+    exit 1
+fi
+
+$RADIUS_PATH -f -X
